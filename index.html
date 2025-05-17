@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Undangan Khitanan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gold: #f1c40f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* COVER STYLES */
+        .cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            transition: all 1s ease;
+        }
+
+        .cover.hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        .cover img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid white;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .cover h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .cover p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 500px;
+        }
+
+        .open-btn {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            animation: bounce 2s infinite;
+        }
+
+        /* EDITOR STYLES */
+        .editor-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .editor-panel {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .preview-panel {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ... (CSS lainnya sama seperti sebelumnya) ... */
+
+        .short-link {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- COVER SECTION -->
+    <div class="cover animate__animated animate__fadeIn" id="cover">
+        <img src="https://cdn-icons-png.flaticon.com/512/3132/3132693.png" alt="Logo" id="cover-logo">
+        <h1 class="animate__animated animate__fadeInDown">Undangan Khitanan</h1>
+        <p class="animate__animated animate__fadeInUp">Klik tombol di bawah untuk membuka undangan</p>
+        <button class="open-btn animate__animated animate__fadeInUp animate__delay-1s" id="openBtn">
+            Buka Undangan
+        </button>
+    </div>
+
+    <!-- EDITOR SECTION -->
+    <div class="editor-container" id="editorContainer" style="display: none;">
+        <!-- ... (Editor panel sama seperti sebelumnya) ... -->
+    </div>
+
+    <script>
+        // ... (Kode sebelumnya sama) ...
+
+        // Generate short link based on child's first name
+        function generateShortLink(childName) {
+            // Get first name only
+            const firstName = childName.split(' ')[0].toLowerCase();
+            // Remove special characters
+            const cleanName = firstName.replace(/[^a-z0-9]/g, '');
+            // Generate random 4-digit number to avoid collision
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            return `${window.location.hostname}/${cleanName}${randomNum}`;
+        }
+
+        // Generate invitation
+        generateBtn.addEventListener('click', function() {
+            // ... (Kode update undangan sebelumnya) ...
+
+            // Generate short link
+            const shortLink = generateShortLink(childName.value || 'khitanan');
+            
+            // Show share section
+            shareSection.style.display = 'block';
+            shareLink.innerHTML = `
+                <span class="short-link">${shortLink}</span><br>
+                <small>Link ini akan aktif setelah dihosting</small>
+            `;
+            
+            // Scroll to share section
+            shareSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Simulate URL routing for demo purposes
+        function handleRouting() {
+            const path = window.location.pathname.substring(1); // Remove leading slash
+            const isSharedLink = path.length > 0 && !path.includes('index.html');
+            
+            if (isSharedLink) {
+                // Hide editor and show only invitation with cover
+                editorContainer.style.display = 'none';
+                
+                // Get invitation data from URL or localStorage (simulated)
+                const params = new URLSearchParams(window.location.search);
+                
+                // Create invitation view with cover
+                document.body.innerHTML = `
+                    <div class="cover" id="invitationCover">
+                        <img src="${params.get('coverPhoto') || 'https://cdn-icons-png.flaticon.com/512/3132/3132693.png'}" 
+                             alt="Cover Photo" 
+                             id="invitationCoverLogo">
+                        <h1>${params.get('coverTitle') || 'Undangan Khitanan'}</h1>
+                        <p>${params.get('coverText') || 'Klik tombol di bawah untuk membuka undangan'}</p>
+                        <button class="open-btn" id="invitationOpenBtn">
+                            Buka Undangan
+                        </button>
+                    </div>
+                    
+                    <div id="invitationContent" style="display: none;">
+                        <!-- Invitation content will be loaded here -->
+                    </div>
+                `;
+                
+                // Handle opening invitation from shared link
+                document.getElementById('invitationOpenBtn').addEventListener('click', function() {
+                    document.getElementById('invitationCover').classList.add('hidden');
+                    
+                    // Load invitation content
+                    document.getElementById('invitationContent').style.display = 'block';
+                    document.getElementById('invitationContent').innerHTML = `
+                        <div class="invitation-preview" style="border-radius: 0; min-height: 100vh;">
+                            <div class="invitation-content">
+                                <img src="${params.get('childPhoto') || 'https://cdn-icons-png.flaticon.com/512/3132/3132693.png'}" 
+                                     alt="Foto Anak" 
+                                     class="invitation-photo">
+                                <h1 class="invitation-title">${params.get('title') || 'UNDANGAN KHITANAN'}</h1>
+                                <p class="invitation-subtitle">${params.get('child') || 'Anak'} - Putra dari ${params.get('parent') || 'Bapak & Ibu'}</p>
+                                
+                                <div class="invitation-details">
+                                    <div class="detail-item">
+                                        <h3>Kepada Yth:</h3>
+                                        <p>${params.get('guest') || 'Bapak/Ibu/Saudara'}</p>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <h3>Tanggal Acara:</h3>
+                                        <p>${params.get('date') ? 
+                                            new Date(params.get('date')).toLocaleDateString('id-ID', { 
+                                                weekday: 'long', 
+                                                year: 'numeric', 
+                                                month: 'long', 
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            }) : 'Sabtu, 17 Juni 2023'}</p>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <h3>Lokasi Acara:</h3>
+                                        <p>${decodeURIComponent(params.get('location') || 'Jl. Contoh No. 123, Kota Bandung')}</p>
+                                    </div>
+                                    
+                                    <div class="detail-item">
+                                        <p>${decodeURIComponent(params.get('info') || 'Acara akan dimulai pukul 09.00 WIB')}</p>
+                                    </div>
+                                </div>
+                                
+                                <p>Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Anda berkenan hadir untuk memberikan doa restu.</p>
+                                <p style="margin-top: 20px;">Hormat kami,</p>
+                                <h3>${decodeURIComponent(params.get('parent') || 'Bapak Ahmad & Ibu Siti')}</h3>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // Initialize routing
+        handleRouting();
+    </script>
+</body>
+</html>
